@@ -28,6 +28,8 @@ The plugin's browser entry exports `apply(ctx)`. It registers one high-priority 
 
 The default fallback guarantee belongs to the host. When this plugin is absent, disabled, disposed, or not selected by the chain, the built-in frame remains eligible and session data, workspace selection, drafts, and tool history stay host-owned.
 
+The plugin also contributes four higher-priority public presentation entries: a blank-session task launcher, an active-task strip, a details context surface, and a `tool.call.presentation` wrapper. These entries consume host owner props and preserve the host's input actions, session projection, tool cards, details actions, Inspect action, and file callbacks. Disposing the plugin removes all four contributions together, so every host fallback remains eligible.
+
 ## Limitations
 
 This package only changes browser presentation. It does not add a backend service, RPC namespace, persistence format, model prompt, tool schema, session event, or host UI dependency. Future workbench components must compose public slots, services, locale dictionaries, and React contracts exported by the published host packages.

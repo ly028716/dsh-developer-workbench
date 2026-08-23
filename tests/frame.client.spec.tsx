@@ -27,8 +27,9 @@ function owner(): FrameOwner {
 
 function harness() {
   const entries: RegisteredFrame[] = []
-  let disposeEffect = (): void => {}
+  const disposeEffects: Array<() => void> = []
   const ctx = {
+    locale: { register: vi.fn(() => () => {}) },
     slots: {
       inject: vi.fn((_key: string, callback: () => () => void) => {
         const dispose = callback()
@@ -46,11 +47,11 @@ function harness() {
     },
     effect: vi.fn((callback: () => () => void) => {
       const dispose = callback()
-      disposeEffect = () => { dispose?.() }
+      disposeEffects.push(() => { dispose?.() })
       return async () => { dispose?.() }
     }),
   }
-  return { ctx, entries, owner: owner(), dispose: () => disposeEffect() }
+  return { ctx, entries, owner: owner(), dispose: () => { for (const dispose of disposeEffects) dispose() } }
 }
 
 describe('developer workbench frame', () => {
@@ -59,7 +60,7 @@ describe('developer workbench frame', () => {
     apply(ctx as never)
 
     expect(ctx.slots.inject).toHaveBeenCalledWith('shell.frame', expect.any(Function))
-    expect(entries).toHaveLength(1)
+    expect(entries).toHaveLength(5)
     expect(entries[0]?.options.name).toBe('shell.frame')
     expect(entries[0]?.options.priority).toBeLessThan(0)
     expect(entries[0]?.options.select(frameOwner)).toBe(true)
@@ -75,7 +76,7 @@ describe('developer workbench frame', () => {
   it('disposes the registration and leaves the host fallback eligible', async () => {
     const { ctx, entries, dispose } = harness()
     apply(ctx as never)
-    expect(entries).toHaveLength(1)
+    expect(entries).toHaveLength(5)
 
     dispose()
 

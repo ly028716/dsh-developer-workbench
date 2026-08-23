@@ -28,6 +28,8 @@ plugins:
 
 默认回退保证属于宿主。当本插件缺失、停用、销毁，或没有被 chain 选中时，内置 frame 仍然可选，并且会话数据、workspace 选择、草稿和工具历史仍由宿主拥有。
 
+插件还会通过公开契约贡献四个更高优先级的展示项：空白会话任务启动器、活跃任务条、详情上下文表面，以及 `tool.call.presentation` wrapper。这些项只消费宿主 owner props，保留宿主输入操作、会话投影、工具卡片、详情操作、Inspect 操作和文件回调。销毁插件会一起移除四项贡献，因此所有宿主 fallback 都会重新可选。
+
 ## 限制
 
 本包只改变浏览器展示。它不新增后端服务、RPC namespace、持久化格式、模型提示、工具 schema、会话事件或宿主 UI 依赖。后续 workbench 组件必须组合已发布宿主包导出的公开 slot、service、locale dictionary 与 React 契约。

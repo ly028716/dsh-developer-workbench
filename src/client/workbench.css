@@ -27,6 +27,86 @@
   background: var(--dsw-alias-workbench-hover);
 }
 
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-task-launcher],
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-active-task],
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-details-context],
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-tool] {
+  box-sizing: border-box;
+  border: 1px solid var(--dsw-alias-workbench-border);
+  border-radius: 10px;
+  background: var(--dsw-alias-workbench-elevated);
+  color: var(--dsw-alias-workbench-text);
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-task-launcher] {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-task-launcher] > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-task-launcher] button {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--dsw-alias-workbench-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-workbench-text);
+  cursor: pointer;
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-task-launcher] button:hover {
+  background: var(--dsw-alias-workbench-hover);
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-task-launcher] p {
+  margin: 0;
+  color: var(--dsw-alias-workbench-muted);
+  font-size: 12px;
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-active-task] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 16px 10px;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-active-task][data-phase="running"] {
+  border-color: var(--dsw-alias-workbench-accent);
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-active-task] span,
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-details-context] span {
+  color: var(--dsw-alias-workbench-muted);
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-details-context] {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 10px;
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-details-context] > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-tool] {
+  border-color: transparent;
+  background: transparent;
+}
+
 @media (prefers-reduced-motion: reduce) {
   [data-dsh-developer-workbench="true"] *,
   [data-dsh-developer-workbench="true"] *::before,
