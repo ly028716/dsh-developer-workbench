@@ -1,0 +1,39 @@
+[data-dsh-developer-workbench="true"] {
+  --dsw-alias-workbench-surface: #111318;
+  --dsw-alias-workbench-elevated: #191c24;
+  --dsw-alias-workbench-text: #f1f4fb;
+  --dsw-alias-workbench-muted: #9ca7bb;
+  --dsw-alias-workbench-border: #2b3241;
+  --dsw-alias-workbench-accent: #79a8ff;
+  --dsw-alias-workbench-hover: #252c3b;
+  --dsw-alias-workbench-plan-track: #2e394d;
+  --dsw-alias-workbench-plan-progress: #7ec8a4;
+}
+
+[data-dsh-developer-workbench="true"] [data-workbench-plan] {
+  background: var(--dsw-alias-workbench-plan-track);
+}
+
+[data-dsh-developer-workbench="true"] [data-workbench-plan-progress] {
+  background: var(--dsw-alias-workbench-plan-progress);
+}
+
+[data-dsh-developer-workbench="true"] :focus-visible {
+  outline: 2px solid var(--dsw-alias-workbench-accent);
+  outline-offset: 2px;
+}
+
+[data-dsh-developer-workbench="true"] [data-interactive]:hover {
+  background: var(--dsw-alias-workbench-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-dsh-developer-workbench="true"] *,
+  [data-dsh-developer-workbench="true"] *::before,
+  [data-dsh-developer-workbench="true"] *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

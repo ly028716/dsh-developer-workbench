@@ -2,25 +2,14 @@
   "name": "@deepseek-ai/dsh-developer-workbench",
   "description": "Optional browser presentation plugin for the DeepSeek Harness developer workbench.",
   "version": "0.1.0-rc.0",
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deepseek-ai/dsh-developer-workbench.git"
-  },
+  "publishConfig": { "access": "public" },
+  "repository": { "type": "git", "url": "git+https://github.com/deepseek-ai/dsh-developer-workbench.git" },
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./lib/index.d.ts",
-      "default": "./lib/index.js"
-    },
-    "./client": {
-      "types": "./lib/client/index.d.ts",
-      "default": "./lib/client/index.js"
-    },
+    ".": { "types": "./lib/index.d.ts", "default": "./lib/index.js" },
+    "./client": { "types": "./lib/client/index.d.ts", "default": "./lib/client/index.js" },
     "./package.json": "./package.json"
   },
   "dsh": {
@@ -36,18 +25,11 @@
       ]
     }
   },
-  "files": [
-    "lib/**/*.js",
-    "lib/**/*.d.ts",
-    "lib/**/*.d.ts.map",
-    "README.md",
-    "README.zh.md",
-    "README.i18n.yaml"
-  ],
+  "files": ["lib/**/*.js", "lib/**/*.d.ts", "lib/**/*.d.ts.map", "lib/**/*.css", "README.md", "README.zh.md", "README.i18n.yaml"],
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
     "test": "vitest run",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node scripts/copy-styles.mjs",
     "pack": "pnpm pack --dry-run"
   },
   "license": "MIT",

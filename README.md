@@ -24,7 +24,7 @@ The host must provide published `@deepseek-ai/dsh-client-*` packages in the `0.1
 
 ## Runtime Contract
 
-The plugin's browser entry exports `apply(ctx)`. The current scaffold leaves `apply(ctx)` empty; Task 4 will register a high-priority `shell.frame` chain entry through `ctx.effect()` and `ctx.slots.register()`. That effect-owned disposer is the removal contract: disabling or uninstalling the plugin removes its registration, and the host-owned `shell.frame` fallback renders the default frame again.
+The plugin's browser entry exports `apply(ctx)`. It registers one high-priority `shell.frame` chain entry for the plugin lifetime through `ctx.effect()` and `ctx.slots.inject()`. `WorkbenchFrame` renders the public host child callbacks for the sidebar, conversation, details, and overlay regions, while its styles are scoped under the frame marker. Disabling or uninstalling the plugin disposes the registration, and the host-owned `shell.frame` fallback renders the default frame again.
 
 The default fallback guarantee belongs to the host. When this plugin is absent, disabled, disposed, or not selected by the chain, the built-in frame remains eligible and session data, workspace selection, drafts, and tool history stay host-owned.
 

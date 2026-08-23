@@ -24,7 +24,7 @@ plugins:
 
 ## 运行时契约
 
-插件的浏览器入口导出 `apply(ctx)`。当前骨架保持 `apply(ctx)` 为空；Task 4 会通过 `ctx.effect()` 和 `ctx.slots.register()` 注册高优先级 `shell.frame` chain 条目。该 effect 拥有的 disposer 就是移除契约：停用或卸载插件会移除它的注册，随后宿主拥有的 `shell.frame` fallback 会重新渲染默认 frame。
+插件的浏览器入口导出 `apply(ctx)`。它通过 `ctx.effect()` 和 `ctx.slots.inject()` 在插件生命周期内注册一个高优先级 `shell.frame` chain 条目。`WorkbenchFrame` 使用宿主公开的 sidebar、conversation、details 与 overlay 子区域回调，样式限定在 frame 标记之下。停用或卸载插件会销毁该注册，随后宿主拥有的 `shell.frame` fallback 会重新渲染默认 frame。
 
 默认回退保证属于宿主。当本插件缺失、停用、销毁，或没有被 chain 选中时，内置 frame 仍然可选，并且会话数据、workspace 选择、草稿和工具历史仍由宿主拥有。
 
