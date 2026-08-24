@@ -1,0 +1,8 @@
+profile=disposed
+default-frame=true
+workbench-marker=absent
+task-launcher=host-fallback
+active-task=host-fallback
+details-context=host-fallback
+tool-wrapper=host-fallback
+session-history=preserved

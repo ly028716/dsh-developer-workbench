@@ -1,0 +1,7 @@
+profile=on
+frame-marker=true
+details-collapsed=false
+details-context=true
+workspace=repo
+plan=1 / 3
+tool-selection=host-owned

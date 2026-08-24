@@ -1,0 +1,6 @@
+profile=on
+frame-marker=true
+active-task=true
+phase=running
+pending=2
+session-state=host-owned

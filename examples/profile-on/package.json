@@ -1,0 +1,5 @@
+{
+	"devDependencies": {
+		"@deepseek-ai/dsh-developer-workbench": "file:..\\..\\deepseek-ai-dsh-developer-workbench-0.1.0-rc.0.tgz"
+	}
+}

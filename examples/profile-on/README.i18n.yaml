@@ -1,0 +1,3 @@
+# Bilingual-pair consistency record for the profile-on example.
+examples/profile-on/README.md: 4023d8431f91dd0a39ad59e0118339705ed483b6
+examples/profile-on/README.zh.md: efd034fba040e5d5612b6b9c7d081cc44389b140

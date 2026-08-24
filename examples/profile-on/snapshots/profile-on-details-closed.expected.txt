@@ -1,0 +1,6 @@
+profile=on
+frame-marker=true
+details-collapsed=true
+details-selection=preserved
+workspace=repo
+plan=1 / 3
