@@ -52,4 +52,6 @@ pnpm run pack
 
 The profile-on fixture's `verify-host-cli.mjs` checks the assembled host CLI in both states: `node verify-host-cli.mjs on` after enabling the overlay, and `node verify-host-cli.mjs off` after removing the dependency and overlay row.
 
+The [release checklist](RELEASE.md) records the registry prerelease gate, profile installation row, uninstall verification, and the boundary that publishing remains a release-owner action.
+
 The package is intentionally not a member of the `deepseek-harness` pnpm workspace. A valid lockfile contains no `workspace:` specifier.

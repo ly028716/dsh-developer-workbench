@@ -52,4 +52,6 @@ pnpm run pack
 
 profile-on fixture 中的 `verify-host-cli.mjs` 会检查两种宿主 CLI 状态：启用 overlay 后运行 `node verify-host-cli.mjs on`，移除依赖和 overlay 条目后运行 `node verify-host-cli.mjs off`。
 
+[发布清单](RELEASE.zh.md) 记录 registry prerelease 门槛、profile 安装条目、卸载验证，以及发布仍由发布负责人执行的边界。
+
 本包刻意不加入 `deepseek-harness` pnpm workspace。有效 lockfile 不包含 `workspace:` 版本。

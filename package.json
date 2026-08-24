@@ -2,6 +2,16 @@
   "name": "@deepseek-ai/dsh-developer-workbench",
   "description": "Optional browser presentation plugin for the DeepSeek Harness developer workbench.",
   "version": "0.1.0-rc.0",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "developer-workbench",
+    "web"
+  ],
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -45,7 +55,10 @@
     "lib/**/*.css",
     "README.md",
     "README.zh.md",
-    "README.i18n.yaml"
+    "README.i18n.yaml",
+    "RELEASE.md",
+    "RELEASE.zh.md",
+    "RELEASE.i18n.yaml"
   ],
   "scripts": {
     "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
