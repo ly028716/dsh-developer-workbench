@@ -19,7 +19,7 @@
     },
     "./client": {
       "types": "./lib/client/index.d.ts",
-      "default": "./lib/client/index.js"
+      "default": "./lib/client.js"
     },
     "./package.json": "./package.json"
   },
@@ -39,6 +39,7 @@
   },
   "files": [
     "lib/**/*.js",
+    "lib/**/*.js.map",
     "lib/**/*.d.ts",
     "lib/**/*.d.ts.map",
     "lib/**/*.css",
@@ -49,7 +50,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
     "test": "vitest run",
-    "build": "tsc -p tsconfig.json && node scripts/copy-styles.mjs",
+    "build": "tsc -p tsconfig.json && node scripts/copy-styles.mjs && node scripts/build-client.mjs",
     "pack": "pnpm pack --dry-run"
   },
   "license": "MIT",
@@ -70,6 +71,7 @@
     "@types/node": "^22.20.1",
     "@types/react": "~18.3.1",
     "@types/react-dom": "~18.3.0",
+    "esbuild": "^0.28.2",
     "jsdom": "^26.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

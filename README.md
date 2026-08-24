@@ -32,6 +32,8 @@ The plugin also contributes four higher-priority public presentation entries: a 
 
 The [`examples/profile-on`](examples/profile-on/README.md) fixture contains the overlay and deterministic profile-on/profile-off evidence. Install the packed tarball into that profile project, apply its overlay after `dsh-web-app`, and remove it with `dsh plugin --profile <name> remove @deepseek-ai/dsh-developer-workbench` (or delete the row) to restore the host fallback.
 
+The build emits `lib/client.js` as the browser entry. It is a CommonJS ModuleLoader bundle registered under this package id, which is the artifact expected by the host Web client; `./client` points to that file in the published package.
+
 ## Limitations
 
 This package only changes browser presentation. It does not add a backend service, RPC namespace, persistence format, model prompt, tool schema, session event, or host UI dependency. Future workbench components must compose public slots, services, locale dictionaries, and React contracts exported by the published host packages.
@@ -47,5 +49,7 @@ pnpm run test
 pnpm run build
 pnpm run pack
 ```
+
+The profile-on fixture's `verify-host-cli.mjs` checks the assembled host CLI in both states: `node verify-host-cli.mjs on` after enabling the overlay, and `node verify-host-cli.mjs off` after removing the dependency and overlay row.
 
 The package is intentionally not a member of the `deepseek-harness` pnpm workspace. A valid lockfile contains no `workspace:` specifier.

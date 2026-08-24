@@ -32,6 +32,8 @@ pnpm add @deepseek-ai/dsh-developer-workbench
 
 [`examples/profile-on`](examples/profile-on/README.zh.md) fixture 包含 overlay 与确定性的 profile-on/profile-off 证据。将打包 tarball 安装到该 profile 项目，在 `dsh-web-app` 之后应用 overlay；执行 `dsh plugin --profile <name> remove @deepseek-ai/dsh-developer-workbench`（或删除该行）即可恢复宿主 fallback。
 
+构建会生成 `lib/client.js` 浏览器入口。它是以本包 id 注册到 ModuleLoader 的 CommonJS bundle，符合宿主 Web 客户端需要的产物；发布包的 `./client` 导出指向该文件。
+
 ## 限制
 
 本包只改变浏览器展示。它不新增后端服务、RPC namespace、持久化格式、模型提示、工具 schema、会话事件或宿主 UI 依赖。后续 workbench 组件必须组合已发布宿主包导出的公开 slot、service、locale dictionary 与 React 契约。
@@ -47,5 +49,7 @@ pnpm run test
 pnpm run build
 pnpm run pack
 ```
+
+profile-on fixture 中的 `verify-host-cli.mjs` 会检查两种宿主 CLI 状态：启用 overlay 后运行 `node verify-host-cli.mjs on`，移除依赖和 overlay 条目后运行 `node verify-host-cli.mjs off`。
 
 本包刻意不加入 `deepseek-harness` pnpm workspace。有效 lockfile 不包含 `workspace:` 版本。
