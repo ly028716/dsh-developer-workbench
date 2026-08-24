@@ -12,12 +12,12 @@
 pnpm add @deepseek-ai/dsh-developer-workbench
 ```
 
-在 profile overlay 中把插件行放在 Web 应用行之后启用它：
+在 profile 的 `cordis.patch.yml` 中把以下精确行放在 `dsh-web-app` 行之后启用它：
 
 ```yaml
-plugins:
-  - package: '@deepseek-ai/dsh-bundle-web-app'
-  - package: '@deepseek-ai/dsh-developer-workbench'
+- insert:
+    - id: developer-workbench
+      name: '@deepseek-ai/dsh-developer-workbench'
 ```
 
 宿主必须提供与 `0.1.0-rc.7` 兼容的已发布 `@deepseek-ai/dsh-client-*` 包。本包把这些宿主侧包声明为 peer dependencies，因此 profile 拥有精确的宿主版本。
@@ -30,7 +30,7 @@ plugins:
 
 插件还会通过公开契约贡献四个更高优先级的展示项：空白会话任务启动器、活跃任务条、详情上下文表面，以及 `tool.call.presentation` wrapper。这些项只消费宿主 owner props，保留宿主输入操作、会话投影、工具卡片、详情操作、Inspect 操作和文件回调。销毁插件会一起移除四项贡献，因此所有宿主 fallback 都会重新可选。
 
-[`examples/profile-on`](examples/profile-on/README.zh.md) fixture 包含 overlay 与确定性的 profile-on/profile-off 证据。将打包 tarball 安装到该 profile 项目，在 `dsh-web-app` 之后应用 overlay；删除依赖或 overlay 即可恢复宿主 fallback。
+[`examples/profile-on`](examples/profile-on/README.zh.md) fixture 包含 overlay 与确定性的 profile-on/profile-off 证据。将打包 tarball 安装到该 profile 项目，在 `dsh-web-app` 之后应用 overlay；执行 `dsh plugin --profile <name> remove @deepseek-ai/dsh-developer-workbench`（或删除该行）即可恢复宿主 fallback。
 
 ## 限制
 

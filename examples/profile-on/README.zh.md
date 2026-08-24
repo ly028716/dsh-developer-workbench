@@ -20,7 +20,7 @@ profile 项目必须解析与 dsh Web 版本匹配的已发布 `@deepseek-ai/dsh
 
 ## 禁用与卸载
 
-删除 overlay 条目，或运行 profile 的包移除命令，然后重新加载 Web profile。host 的 `shell.frame` 与子展示 fallback 会重新渲染；session 历史、工作区选择、草稿和工具历史仍由 dsh 拥有。
+删除 overlay 条目，或执行 `dsh plugin --profile <name> remove @deepseek-ai/dsh-developer-workbench`，然后重新加载 Web profile。host 的 `shell.frame` 与子展示 fallback 会重新渲染；session 历史、工作区选择、草稿和工具历史仍由 dsh 拥有。
 
 ## 证据
 

@@ -12,12 +12,12 @@ Install the package into the profile project that assembles the web app:
 pnpm add @deepseek-ai/dsh-developer-workbench
 ```
 
-Enable it by adding the plugin row after the web app row in the profile overlay:
+Enable it by adding this exact row after the `dsh-web-app` row in the profile's `cordis.patch.yml`:
 
 ```yaml
-plugins:
-  - package: '@deepseek-ai/dsh-bundle-web-app'
-  - package: '@deepseek-ai/dsh-developer-workbench'
+- insert:
+    - id: developer-workbench
+      name: '@deepseek-ai/dsh-developer-workbench'
 ```
 
 The host must provide published `@deepseek-ai/dsh-client-*` packages in the `0.1.0-rc.7` compatible range. The package declares those host-facing packages as peer dependencies so the profile owns the exact host version.
@@ -30,7 +30,7 @@ The default fallback guarantee belongs to the host. When this plugin is absent, 
 
 The plugin also contributes four higher-priority public presentation entries: a blank-session task launcher, an active-task strip, a details context surface, and a `tool.call.presentation` wrapper. These entries consume host owner props and preserve the host's input actions, session projection, tool cards, details actions, Inspect action, and file callbacks. Disposing the plugin removes all four contributions together, so every host fallback remains eligible.
 
-The [`examples/profile-on`](examples/profile-on/README.md) fixture contains the overlay and deterministic profile-on/profile-off evidence. Install the packed tarball into that profile project, apply its overlay after `dsh-web-app`, and remove the dependency or overlay to restore the host fallback.
+The [`examples/profile-on`](examples/profile-on/README.md) fixture contains the overlay and deterministic profile-on/profile-off evidence. Install the packed tarball into that profile project, apply its overlay after `dsh-web-app`, and remove it with `dsh plugin --profile <name> remove @deepseek-ai/dsh-developer-workbench` (or delete the row) to restore the host fallback.
 
 ## Limitations
 

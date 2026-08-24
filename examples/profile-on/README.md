@@ -20,7 +20,7 @@ Apply `cordis.patch.yml` after the `dsh-web-app` profile layer. The enabled brow
 
 ## Disable and uninstall
 
-Remove the overlay row or run the profile's package removal command, then reload the Web profile. The host `shell.frame` and child presentation fallbacks render again; session history, workspace selection, drafts, and tool history remain owned by dsh.
+Remove the overlay row or run `dsh plugin --profile <name> remove @deepseek-ai/dsh-developer-workbench`, then reload the Web profile. The host `shell.frame` and child presentation fallbacks render again; session history, workspace selection, drafts, and tool history remain owned by dsh.
 
 ## Evidence
 
