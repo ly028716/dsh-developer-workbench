@@ -4,8 +4,6 @@ import { NS } from './locales.ts'
 /** Props of a `conversation.input.dock` occupant. */
 type TaskLauncherDockProps = PropsRuntime<'conversation.input.dock'> & PropsLocale<typeof NS>
 
-const TASK_SCAFFOLD = '目标：\n\n上下文：\n\n验收标准：'
-
 /** Focused task console rendered above the host-owned composer. */
 export function TaskLauncherDock({ useSession, useInput, inputActions, t }: TaskLauncherDockProps) {
   const blank = useSession(s => s.blank)
@@ -55,7 +53,7 @@ export function TaskLauncherDock({ useSession, useInput, inputActions, t }: Task
             type="button"
             data-interactive="true"
             data-dsh-workbench-action="scaffold"
-            onClick={() => { inputActions.setDraft(TASK_SCAFFOLD) }}
+            onClick={() => { inputActions.setDraft(t('task.scaffold')) }}
           >
             {t('task.insertScaffold')}
           </button>

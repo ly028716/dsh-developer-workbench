@@ -45,6 +45,7 @@ pnpm install
 pnpm run typecheck
 pnpm run test
 pnpm run build
+pnpm run verify:bundle
 pnpm pack --dry-run
 ```
 

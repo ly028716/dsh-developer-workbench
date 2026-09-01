@@ -11,6 +11,7 @@ export type DeveloperWorkbenchKey =
   | 'task.draftDescription'
   | 'task.insertScaffold'
   | 'task.clearDraft'
+  | 'task.scaffold'
   | 'task.phase.plain'
   | 'task.phase.adjudicating'
   | 'task.phase.claimed'
@@ -31,6 +32,7 @@ export const en: LocaleDictOf<typeof NS> = {
   'task.draftDescription': 'Current draft',
   'task.insertScaffold': 'Insert task scaffold',
   'task.clearDraft': 'Clear draft',
+  'task.scaffold': 'Goal:\n\nContext:\n\nAcceptance criteria:',
   'task.phase.plain': 'Waiting for task',
   'task.phase.adjudicating': 'Preparing',
   'task.phase.claimed': 'Ready to submit',
@@ -52,6 +54,7 @@ export const zh: LocaleDictOf<typeof NS> = {
   'task.draftDescription': '当前草稿',
   'task.insertScaffold': '插入任务骨架',
   'task.clearDraft': '清空草稿',
+  'task.scaffold': '目标：\n\n上下文：\n\n验收标准：',
   'task.phase.plain': '等待任务',
   'task.phase.adjudicating': '准备中',
   'task.phase.claimed': '待提交',

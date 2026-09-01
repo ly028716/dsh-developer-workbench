@@ -48,5 +48,8 @@ jobs:
       - name: Build package
         run: pnpm build
 
+      - name: Verify browser bundle host contract
+        run: pnpm verify:bundle
+
       - name: Validate package contents
         run: pnpm pack --dry-run

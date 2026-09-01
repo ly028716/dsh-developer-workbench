@@ -10,16 +10,17 @@
 ## 核心组件
 
 ### 1. TaskLauncherDock（任务启动器）
-空白会话的起始任务
+任务焦点控制台
 - 位置: `conversation.input.dock`（`id: 'workbench', order: 10`）
-- 仅空白且空闲的会话显示，提供 3 个预设任务按钮
-- 点击后通过 `inputActions.setDraft()` 填充输入框草稿
+- 跟随当前会话显示任务阶段、草稿摘要、上下文数量和排队数量
+- 仅空白且空闲的会话提供一个任务骨架操作；通过 `inputActions.setDraft()` 填充目标、上下文和验收标准结构
+- 不提供固定的预设任务按钮；任务提交仍由宿主输入框负责
 
 ### 2. ActiveTaskIndicator（活跃任务指示器）
 活动任务状态指示器
 - 位置: `conversation.input.right`（`id: 'workbench', order: 0`）
 - 通过注入的 `useSession` selector 读取运行/排队状态
-- 展示状态圆点、文案与进度条
+- 展示状态圆点、状态文案与状态轨道；不伪造任务完成百分比
 
 > 插件是纯增量的：它从不声明或替换宿主 slot（`root`、`details`、`tool.call.toolview` 等）。
 
@@ -31,6 +32,8 @@ cd E:\IDEWorkplaces\DeepSeekHarness\dsh-developer-workbench
 pnpm install
 pnpm run typecheck
 pnpm run test
+pnpm run build
+pnpm run verify:bundle
 ```
 
 ### 方式 2: 集成到 DSH
@@ -62,7 +65,7 @@ document.querySelector('[data-dsh-workbench-task-launcher]')
 document.querySelector('[data-dsh-workbench-active-task]')
 ```
 
-空白会话中任务启动器应出现；点击按钮后草稿被填充。宿主 frame 标记保持不变。
+任务控制台应随会话出现；在空白且空闲的会话中点击“插入任务骨架”后，草稿会被填充。宿主 frame 标记保持不变。
 
 ## 关键文件
 

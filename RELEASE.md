@@ -11,10 +11,13 @@ pnpm install --frozen-lockfile
 pnpm run typecheck
 pnpm run test
 pnpm run build
+pnpm run verify:bundle
 pnpm pack --dry-run
 ```
 
 `pnpm run test` covers the additive contract. `tests/registration.client.spec.tsx` pins the two dock registrations (names, `id`, `order`, locale) and their disposal, and asserts the plugin never declares host-owned seats (`root`, `details`, `tool.call.toolview`). `tests/presentation.client.spec.tsx` and `tests/browser.workbench.spec.tsx` render the task focus console and active-task indicator through the injected `useSession` / `useInput` hooks and verify the scaffold action writes to `inputActions.setDraft`.
+
+`pnpm run verify:bundle` executes the generated `lib/client.js` through a ModuleLoader-compatible harness and verifies its package id, `apply` export, and `slots,locale` injection contract. A real profile reload is still required before publication.
 
 The packed file must contain `lib/client.js`, declarations, scoped CSS, and both README files. `package.json` must keep `./client` pointed at `./lib/client.js` and must not contain a `workspace:` dependency.
 

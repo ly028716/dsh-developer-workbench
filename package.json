@@ -65,6 +65,7 @@
     "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json",
     "test": "vitest run",
     "build": "tsc -p tsconfig.json && node scripts/copy-styles.mjs && node scripts/build-client.mjs",
+    "verify:bundle": "node scripts/verify-client-bundle.mjs",
     "pack": "pnpm pack --dry-run"
   },
   "license": "MIT",

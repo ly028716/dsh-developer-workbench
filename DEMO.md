@@ -99,7 +99,7 @@
 ```html
 <!-- 宿主渲染的 frame / conversation 内容 ... -->
 
-<!-- conversation.input.dock 列表（空白会话时）-->
+<!-- conversation.input.dock 列表（随当前会话显示）-->
 <div data-slot="conversation.input.dock">
   <!-- 宿主条目（todo、queue ...） -->
   <section data-dsh-workbench-task-launcher="true">

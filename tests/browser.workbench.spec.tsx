@@ -19,6 +19,7 @@ const translate = (key: string, params?: Record<string, unknown>): string => {
     'task.draftDescription': 'Current draft',
     'task.insertScaffold': 'Insert task scaffold',
     'task.clearDraft': 'Clear draft',
+    'task.scaffold': 'Goal:\n\nContext:\n\nAcceptance criteria:',
     'task.phase.plain': 'Waiting for task',
     'task.phase.submitting': 'Submitting',
     'task.contextCount': '{count} context',
@@ -138,7 +139,7 @@ describe('Workbench dock contributions in a real DOM', () => {
 
     act(() => { (container.querySelector('[data-dsh-workbench-action="scaffold"]') as HTMLButtonElement).click() })
 
-    expect(setDraft).toHaveBeenCalledWith('目标：\n\n上下文：\n\n验收标准：')
+    expect(setDraft).toHaveBeenCalledWith('Goal:\n\nContext:\n\nAcceptance criteria:')
     act(() => { root.unmount() })
   })
 

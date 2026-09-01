@@ -4,6 +4,10 @@ import { TaskLauncherDock } from '../src/client/TaskLauncherDock.tsx'
 import { en, NS, zh } from '../src/client/locales.ts'
 import { apply } from '../src/client/index.ts'
 
+type IsAny<T> = 0 extends (1 & T) ? true : false
+type AssertNotAny<T> = IsAny<T> extends false ? true : never
+const applyContextMustBeTyped: AssertNotAny<Parameters<typeof apply>[0]> = true
+
 interface RegisteredEntry {
   options: { name: string; id: string; order: number; locale: string }
   component: unknown

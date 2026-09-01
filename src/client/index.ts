@@ -1,4 +1,5 @@
 /** Browser entry for the optional Developer Workbench presentation plugin. */
+import type { Context as ClientContext } from '@deepseek-ai/cordis'
 // Type-only: pulls the input-dock / input-right SlotMap keys and the
 // conversation session-standard seats (useInput, inputActions) into the type
 // program; the host injects them at render time.
@@ -6,6 +7,10 @@ import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 // Type-only: pulls the session-standard `useSession` seat consumed by the
 // dock components into the type program.
 import type {} from '@deepseek-ai/dsh-client-ui-session/client'
+// Type-only: pulls the public `slots` and `locale` services into the Cordis
+// client context contract.
+import type {} from '@deepseek-ai/dsh-client-runtime/client'
+import type {} from '@deepseek-ai/dsh-client-locale/client'
 import './workbench.css'
 import { ActiveTaskIndicator } from './ActiveTaskIndicator.tsx'
 import { TaskLauncherDock } from './TaskLauncherDock.tsx'
@@ -20,7 +25,7 @@ export const inject = ['slots', 'locale'] as const
  * entries — nothing here replaces the host frame or its declared seats.
  * @param ctx - client root context with the host slot registry.
  */
-export function apply(ctx: any): void {
+export function apply(ctx: ClientContext): void {
   // Register locale dictionaries
   ctx.effect(() => ctx.locale.register(NS, { en, zh }), 'dsh-developer-workbench: dictionaries')
 

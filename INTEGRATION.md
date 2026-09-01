@@ -93,8 +93,12 @@ After installation, verify the plugin is working:
 
 2. **Confirm the host frame is unchanged:**
    ```javascript
-   // The host frame must NOT be replaced; its own markers stay.
-   document.querySelector('[data-dsh-developer-workbench="true"]') // null
+   // The plugin contributes these two scoped roots.
+   document.querySelector('[data-dsh-workbench-task-launcher="true"]')
+   document.querySelector('[data-dsh-workbench-active-task="true"]')
+
+   // The host frame must NOT be replaced; verify its own host marker remains.
+   // Use the marker exposed by the installed dsh-web-app version here.
    ```
 
 3. **Test disable/uninstall:**

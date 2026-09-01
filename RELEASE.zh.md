@@ -11,10 +11,13 @@ pnpm install --frozen-lockfile
 pnpm run typecheck
 pnpm run test
 pnpm run build
+pnpm run verify:bundle
 pnpm pack --dry-run
 ```
 
 `pnpm run test` 覆盖增量契约。`tests/registration.client.spec.tsx` 锁定两个 dock 注册（名称、`id`、`order`、locale）及其销毁行为，并断言插件从不声明宿主拥有的 seat（`root`、`details`、`tool.call.toolview`）。`tests/presentation.client.spec.tsx` 与 `tests/browser.workbench.spec.tsx` 通过注入的 `useSession` / `useInput` hook 渲染任务控制台和活跃任务指示器，并验证任务骨架写入 `inputActions.setDraft`。
+
+`pnpm run verify:bundle` 会在 ModuleLoader 兼容的 harness 中执行生成的 `lib/client.js`，验证包 id、`apply` 导出以及 `slots,locale` 注入契约。发布前仍需在真实 profile 中重载页面进行最终验证。
 
 打包内容必须包含 `lib/client.js`、声明文件、限定作用域的 CSS 和两个 README。`package.json` 必须保持 `./client` 指向 `./lib/client.js`，并且不得包含 `workspace:` 依赖。
 
