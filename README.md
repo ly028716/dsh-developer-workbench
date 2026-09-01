@@ -24,11 +24,11 @@ The host must provide the published `@deepseek-ai/dsh-client-*` contract set at 
 
 ## Runtime Contract
 
-The plugin's browser entry exports `apply(ctx)`. For the plugin lifetime it registers two purely additive contributions through `ctx.effect()` and `ctx.slots.inject()` — it never declares or replaces host-owned slots. A blank-session task launcher registers as `id: 'workbench', order: 10` in the `conversation.input.dock` list slot, and an active-task indicator registers as `id: 'workbench', order: 0` in the `conversation.input.right` list slot. Both coexist beside the shipped occupants (todo, queue, …) and are removed together when the plugin is disabled or uninstalled.
+The plugin's browser entry exports `apply(ctx)`. For the plugin lifetime it registers two purely additive contributions through `ctx.effect()` and `ctx.slots.inject()` — it never declares or replaces host-owned slots. A task focus console registers as `id: 'workbench', order: 10` in the `conversation.input.dock` list slot, and an active-task indicator registers as `id: 'workbench', order: 0` in the `conversation.input.right` list slot. Both coexist beside the shipped occupants (todo, queue, …) and are removed together when the plugin is disabled or uninstalled.
 
 The host frame and its input zone remain fully host-owned. Session data, workspace selection, drafts, and tool history are never touched; the plugin only reads session state through the injected `useSession` selector hook and writes drafts through the host's `inputActions.setDraft`.
 
-The task launcher appears only on blank, idle sessions and fills the composer draft through `inputActions.setDraft` when a starter is chosen. The active-task indicator renders the running/queued state and a small progress track. Both components scope their tokens and styles under the `data-dsh-developer-workbench="true"` marker.
+The task focus console follows the current session and shows the task phase, draft summary, context count, and queue count. Blank sessions can insert a single task scaffold (goal, context, acceptance criteria) through `inputActions.setDraft`; it does not offer a fixed starter-button catalog. The active-task indicator only renders the host's public running/queued/idle state and never fabricates a completion percentage. Both components scope their tokens and styles under the `data-dsh-developer-workbench="true"` marker.
 
 The build emits `lib/client.js` as the browser entry. It is a CommonJS ModuleLoader bundle registered under this package id, which is the artifact expected by the host Web client; `./client` points to that file in the published package.
 
@@ -48,7 +48,7 @@ pnpm run build
 pnpm pack --dry-run
 ```
 
-`tests/registration.client.spec.tsx` pins the two additive registrations (dock + right, with `id`/`order`) and their disposal, and asserts the plugin never declares host-owned seats (`root`, `details`, `tool.call.toolview`). `tests/presentation.client.spec.tsx` renders both contributions through the injected `useSession` selector hook; `tests/browser.workbench.spec.tsx` mounts them in a DOM and drives a starter click into `inputActions.setDraft`. The suite also checks focus-visible and reduced-motion rules through the scoped CSS contract test.
+`tests/registration.client.spec.tsx` pins the two additive registrations (dock + right, with `id`/`order`) and their disposal, and asserts the plugin never declares host-owned seats (`root`, `details`, `tool.call.toolview`). `tests/presentation.client.spec.tsx` and `tests/browser.workbench.spec.tsx` render both contributions through the injected `useSession` / `useInput` selector hooks and verify the task scaffold writes to `inputActions.setDraft`. The suite also checks focus-visible and reduced-motion rules through the scoped CSS contract test.
 
 The [release checklist](RELEASE.md) records the registry prerelease gate, profile installation row, uninstall verification, and the boundary that publishing remains a release-owner action.
 

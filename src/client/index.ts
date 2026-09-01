@@ -24,10 +24,10 @@ export function apply(ctx: any): void {
   // Register locale dictionaries
   ctx.effect(() => ctx.locale.register(NS, { en, zh }), 'dsh-developer-workbench: dictionaries')
 
-  // Child presentations: task launcher + active-task indicator.
+  // Child presentations: task focus console + active-task indicator.
   ctx.effect(() => {
     const disposers = [
-      // Task launcher in the input dock (above composer)
+      // Task focus console in the input dock (above composer)
       ctx.slots.inject('conversation.input.dock', () => ctx.slots.register({
         name: 'conversation.input.dock',
         id: 'workbench',
