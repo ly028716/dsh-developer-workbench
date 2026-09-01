@@ -1,7 +1,0 @@
-# Profile-on overlay for the optional Developer Workbench browser plugin.
-# Apply this list after the shipped dsh-web-app bundle so the browser roster
-# receives the plugin row without changing any host-owned service or session.
-
-- insert:
-    - id: developer-workbench
-      name: '@deepseek-ai/dsh-developer-workbench'

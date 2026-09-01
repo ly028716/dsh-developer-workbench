@@ -1,7 +1,0 @@
-profile=off
-default-frame=true
-workbench-marker=absent
-task-launcher=absent
-active-task=absent
-details-context=absent
-tool-wrapper=absent

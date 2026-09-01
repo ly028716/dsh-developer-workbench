@@ -1,5 +1,0 @@
-profile=on
-frame-marker=true
-task-launcher=true
-starter=修复失败测试
-host-composer=preserved

@@ -1,6 +1,6 @@
 # 发布清单
 
-宿主发布匹配的 `@deepseek-ai/dsh-client-*` peer 包后，本包即可进行 registry prerelease。
+宿主发布版本为 `^0.1.1-rc.2`（或兼容的更高版本）的 `@deepseek-ai/dsh-client-*` peer 包后，本包即可进行 registry prerelease。宿主还必须提供带 locale 注入 slot props 的 `conversation.input.dock` / `conversation.input.right` 列表 slot。
 
 ## 本地验证
 
@@ -14,6 +14,8 @@ pnpm run build
 pnpm pack --dry-run
 ```
 
+`pnpm run test` 覆盖增量契约。`tests/registration.client.spec.tsx` 锁定两个 dock 注册（名称、`id`、`order`、locale）及其销毁行为，并断言插件从不声明宿主拥有的 seat（`root`、`details`、`tool.call.toolview`）。`tests/presentation.client.spec.tsx` 与 `tests/browser.workbench.spec.tsx` 通过注入的 `useSession` hook 渲染任务启动器和活跃任务指示器，并驱动 starter 点击进入 `inputActions.setDraft`。
+
 打包内容必须包含 `lib/client.js`、声明文件、限定作用域的 CSS 和两个 README。`package.json` 必须保持 `./client` 指向 `./lib/client.js`，并且不得包含 `workspace:` 依赖。
 
 ## Profile 安装
@@ -26,18 +28,11 @@ pnpm pack --dry-run
       name: '@deepseek-ai/dsh-developer-workbench'
 ```
 
-使用 `node examples/profile-on/verify-host-cli.mjs on` 验证宿主组装。卸载时执行 `dsh plugin --profile <name> remove @deepseek-ai/dsh-developer-workbench`，删除 overlay 条目，重新加载 profile，再使用 `off` 参数运行校验脚本。宿主 frame 与子展示 fallback 必须恢复，且不得改变 session 数据、工作区选择、草稿或工具历史。
+profile patch 必须放在 `dsh-web-app` 之后；只安装包并不会启用浏览器贡献。启用后的页面里，空白且空闲会话中的任务启动器和活跃任务指示器会出现在宿主输入区域内；同时移除依赖和 patch 行后它们消失，宿主 frame 保持自身标记不变。插件从不写入 session 数据、工作区选择、草稿或工具历史。
 
 ## 已记录验证
 
-2026-08-24，在隔离的临时 `DSH_HOME` 中通过源码宿主 CLI 安装插件，使用 overlay 加载，然后移除依赖和 overlay 条目完成卸载。插件启用时宿主 CLI 能报告该条目，移除后不再报告。浏览器重新加载结果为：
-
-```text
-enabled:  status=200 workbench=1 default=0 errors=0
-disabled: status=200 workbench=0 default=1 errors=0
-```
-
-整个生命周期没有模型请求，也没有写入 session、工作区、草稿或工具历史状态；这些表面始终由宿主拥有的 fallback 负责。
+增量设计由上述自动化套件覆盖（注册、销毁、渲染、starter 交互）；整个过程没有模型请求，也不写入宿主状态。手动 profile 重载在启用/移除后确认两个 dock 标记出现/消失，宿主 frame 保持不变。
 
 ## 发布边界
 

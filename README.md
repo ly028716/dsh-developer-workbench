@@ -20,17 +20,15 @@ Enable it by adding this exact row after the `dsh-web-app` row in the profile's 
       name: '@deepseek-ai/dsh-developer-workbench'
 ```
 
-The host must provide published `@deepseek-ai/dsh-client-*` packages in the `0.1.0-rc.7` compatible range. The package declares those host-facing packages as peer dependencies so the profile owns the exact host version.
+The host must provide the published `@deepseek-ai/dsh-client-*` contract set at `^0.1.1-rc.2` (or a later release that preserves the same public slots). The package declares those host-facing packages as peer dependencies so the profile owns the exact host version. Older hosts without the `conversation.input.dock` / `conversation.input.right` list slots or locale-injected slot props are not supported.
 
 ## Runtime Contract
 
-The plugin's browser entry exports `apply(ctx)`. It registers one high-priority `shell.frame` chain entry for the plugin lifetime through `ctx.effect()` and `ctx.slots.inject()`. `WorkbenchFrame` renders the public host child callbacks for the sidebar, conversation, details, and overlay regions, while its styles are scoped under the frame marker. Disabling or uninstalling the plugin disposes the registration, and the host-owned `shell.frame` fallback renders the default frame again.
+The plugin's browser entry exports `apply(ctx)`. For the plugin lifetime it registers two purely additive contributions through `ctx.effect()` and `ctx.slots.inject()` — it never declares or replaces host-owned slots. A blank-session task launcher registers as `id: 'workbench', order: 10` in the `conversation.input.dock` list slot, and an active-task indicator registers as `id: 'workbench', order: 0` in the `conversation.input.right` list slot. Both coexist beside the shipped occupants (todo, queue, …) and are removed together when the plugin is disabled or uninstalled.
 
-The default fallback guarantee belongs to the host. When this plugin is absent, disabled, disposed, or not selected by the chain, the built-in frame remains eligible and session data, workspace selection, drafts, and tool history stay host-owned.
+The host frame and its input zone remain fully host-owned. Session data, workspace selection, drafts, and tool history are never touched; the plugin only reads session state through the injected `useSession` selector hook and writes drafts through the host's `inputActions.setDraft`.
 
-The plugin also contributes four higher-priority public presentation entries: a blank-session task launcher, an active-task strip, a details context surface, and a `tool.call.presentation` wrapper. These entries consume host owner props and preserve the host's input actions, session projection, tool cards, details actions, Inspect action, and file callbacks. Disposing the plugin removes all four contributions together, so every host fallback remains eligible.
-
-The [`examples/profile-on`](examples/profile-on/README.md) fixture contains the overlay and deterministic profile-on/profile-off evidence. Install the packed tarball into that profile project, apply its overlay after `dsh-web-app`, and remove it with `dsh plugin --profile <name> remove @deepseek-ai/dsh-developer-workbench` (or delete the row) to restore the host fallback.
+The task launcher appears only on blank, idle sessions and fills the composer draft through `inputActions.setDraft` when a starter is chosen. The active-task indicator renders the running/queued state and a small progress track. Both components scope their tokens and styles under the `data-dsh-developer-workbench="true"` marker.
 
 The build emits `lib/client.js` as the browser entry. It is a CommonJS ModuleLoader bundle registered under this package id, which is the artifact expected by the host Web client; `./client` points to that file in the published package.
 
@@ -47,10 +45,10 @@ pnpm install
 pnpm run typecheck
 pnpm run test
 pnpm run build
-pnpm run pack
+pnpm pack --dry-run
 ```
 
-The profile-on fixture's `verify-host-cli.mjs` checks the assembled host CLI in both states: `node verify-host-cli.mjs on` after enabling the overlay, and `node verify-host-cli.mjs off` after removing the dependency and overlay row.
+`tests/registration.client.spec.tsx` pins the two additive registrations (dock + right, with `id`/`order`) and their disposal, and asserts the plugin never declares host-owned seats (`root`, `details`, `tool.call.toolview`). `tests/presentation.client.spec.tsx` renders both contributions through the injected `useSession` selector hook; `tests/browser.workbench.spec.tsx` mounts them in a DOM and drives a starter click into `inputActions.setDraft`. The suite also checks focus-visible and reduced-motion rules through the scoped CSS contract test.
 
 The [release checklist](RELEASE.md) records the registry prerelease gate, profile installation row, uninstall verification, and the boundary that publishing remains a release-owner action.
 

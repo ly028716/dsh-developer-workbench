@@ -1,42 +1,42 @@
+// @ts-nocheck
+import { readFileSync } from 'node:fs'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { describe, expect, it, vi } from 'vitest'
-import { ActiveTask } from '../src/client/ActiveTask.tsx'
-import { DetailsContext } from '../src/client/DetailsContext.tsx'
-import { TaskLauncher } from '../src/client/TaskLauncher.tsx'
-import { WorkbenchToolPresentation } from '../src/client/WorkbenchToolPresentation.tsx'
-import { apply } from '../src/client/index.ts'
+import { describe, expect, it } from 'vitest'
+import { ActiveTaskIndicator } from '../src/client/ActiveTaskIndicator.tsx'
+import { TaskLauncherDock } from '../src/client/TaskLauncherDock.tsx'
 
 function translate(key: string, params?: Record<string, unknown>): string {
   if (key === 'task.fixTests') return '修复失败测试'
   if (key === 'active.running') return '正在执行'
-  if (key === 'active.idle') return '任务上下文'
+  if (key === 'active.idle') return '空闲'
   if (key === 'active.pending') return `待处理 ${String(params?.count ?? '')} 条`
-  if (key === 'details.workspace') return '工作区'
-  if (key === 'details.plan') return '计划'
   return key
 }
 
-const rootRuntime = {
-  useSessions: (() => undefined) as never,
-  useWorkspaces: (() => undefined) as never,
+interface SessionShape {
+  running: boolean
+  blank: boolean
+  queue: unknown[]
 }
 
-const sessionRuntime = {
-  useSession: (() => undefined) as never,
-  sessionId: 'session-1' as never,
-  useProjection: (() => undefined) as never,
-  useInput: (() => undefined) as never,
-  inputActions: { setDraft: () => {}, addImages: () => true, removeImage: () => {}, pruneImages: () => {}, submit: () => {} },
+/** Injects a session-backed selector hook the way the host slot registry does. */
+function useSessionFrom(session: SessionShape) {
+  return (selector: (s: SessionShape) => unknown) => selector(session)
 }
 
-describe('developer workbench child presentation', () => {
-  it('renders the task launcher through the public owner action', () => {
-    const select = vi.fn()
+describe('developer workbench presentations', () => {
+  it('loads the workbench stylesheet from the browser entry', () => {
+    const entry = readFileSync('src/client/index.ts', 'utf8')
+
+    expect(entry).toContain("import './workbench.css'")
+  })
+
+  it('renders the task launcher on a blank, idle session', () => {
     const html = renderToStaticMarkup(
-      <TaskLauncher
-        {...rootRuntime}
+      <TaskLauncherDock
+        useSession={useSessionFrom({ running: false, blank: true, queue: [] })}
+        inputActions={{ setDraft: () => {} }}
         t={translate}
-        starterAction={{ available: true, select }}
       />,
     )
 
@@ -44,66 +44,57 @@ describe('developer workbench child presentation', () => {
     expect(html).toContain('修复失败测试')
   })
 
-  it('renders active task and details context from host-owned props', () => {
-    const active = renderToStaticMarkup(
-      <ActiveTask {...rootRuntime} {...sessionRuntime} t={translate} phase="running" pendingCount={2} />,
+  it('hides the task launcher once a session has begun or is running', () => {
+    const started = renderToStaticMarkup(
+      <TaskLauncherDock
+        useSession={useSessionFrom({ running: false, blank: false, queue: [] })}
+        inputActions={{ setDraft: () => {} }}
+        t={translate}
+      />,
     )
-    const details = renderToStaticMarkup(
-      <DetailsContext {...rootRuntime} {...sessionRuntime} t={translate} workspaceTitle="repo" planSummary="1 / 3" />,
-    )
-
-    expect(active).toContain('data-dsh-workbench-active-task="true"')
-    expect(active).toContain('2')
-    expect(details).toContain('data-dsh-workbench-details-context="true"')
-    expect(details).toContain('repo')
-  })
-
-  it('wraps the host tool presentation without replacing its content callback', () => {
-    const html = renderToStaticMarkup(
-      <WorkbenchToolPresentation
-        {...rootRuntime}
-        {...sessionRuntime}
-        openFile={() => {}}
-        openDetails={() => {}}
-        callId="call-1"
-        toolName="bash"
-        block={{} as never}
-        renderContent={() => <span data-host-content="true">host row</span>}
+    const busy = renderToStaticMarkup(
+      <TaskLauncherDock
+        useSession={useSessionFrom({ running: true, blank: true, queue: [] })}
+        inputActions={{ setDraft: () => {} }}
+        t={translate}
       />,
     )
 
-    expect(html).toContain('data-dsh-workbench-tool="bash"')
-    expect(html).toContain('data-host-content="true"')
+    expect(started).toBe('')
+    expect(busy).toBe('')
   })
 
-  it('registers the four child contributions with the plugin lifetime', () => {
-    const registrations: string[] = []
-    const disposers: Array<() => void> = []
-    const ctx = {
-      locale: { register: vi.fn(() => () => {}) },
-      slots: {
-        inject: vi.fn((_key: string, callback: () => () => void) => {
-          const dispose = callback()
-          disposers.push(dispose)
-          return () => {}
-        }),
-        register: vi.fn((options: { name: string }) => {
-          registrations.push(options.name)
-          return () => {}
-        }),
-      },
-      effect: vi.fn((callback: () => () => void) => callback()),
-    }
+  it('exposes one starter control per task', () => {
+    const html = renderToStaticMarkup(
+      <TaskLauncherDock
+        useSession={useSessionFrom({ running: false, blank: true, queue: [] })}
+        inputActions={{ setDraft: () => {} }}
+        t={translate}
+      />,
+    )
 
-    apply(ctx as never)
+    expect(html.match(/data-dsh-workbench-starter="true"/g)).toHaveLength(3)
+  })
 
-    expect(registrations).toEqual([
-      'shell.frame',
-      'conversation.hero.taskLauncher',
-      'conversation.active.task',
-      'conversation.details.context',
-      'tool.call.presentation',
-    ])
-    expect(disposers).toHaveLength(5)
+  it('renders the active-task indicator in running and queued states', () => {
+    const running = renderToStaticMarkup(
+      <ActiveTaskIndicator
+        useSession={useSessionFrom({ running: true, blank: false, queue: [{}, {}] })}
+        t={translate}
+      />,
+    )
+    const idle = renderToStaticMarkup(
+      <ActiveTaskIndicator
+        useSession={useSessionFrom({ running: false, blank: true, queue: [] })}
+        t={translate}
+      />,
+    )
+
+    expect(running).toContain('data-dsh-workbench-active-task="true"')
+    expect(running).toContain('data-phase="running"')
+    expect(running).toContain('正在执行')
+    expect(running).toContain('待处理 2 条')
+    expect(idle).toContain('data-phase="idle"')
+    expect(idle).toContain('空闲')
   })
 })

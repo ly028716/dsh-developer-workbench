@@ -1,6 +1,6 @@
 # Release checklist
 
-This package is ready for a registry prerelease after the host publishes the matching `@deepseek-ai/dsh-client-*` peer packages.
+This package is ready for a registry prerelease after the host publishes the matching `@deepseek-ai/dsh-client-*` peer packages at `^0.1.1-rc.2` or a compatible later release. The host must expose the `conversation.input.dock` / `conversation.input.right` list slots with locale-injected slot props.
 
 ## Local verification
 
@@ -14,6 +14,8 @@ pnpm run build
 pnpm pack --dry-run
 ```
 
+`pnpm run test` covers the additive contract. `tests/registration.client.spec.tsx` pins the two dock registrations (names, `id`, `order`, locale) and their disposal, and asserts the plugin never declares host-owned seats (`root`, `details`, `tool.call.toolview`). `tests/presentation.client.spec.tsx` and `tests/browser.workbench.spec.tsx` render the task launcher and active-task indicator through the injected `useSession` hook and drive a starter click into `inputActions.setDraft`.
+
 The packed file must contain `lib/client.js`, declarations, scoped CSS, and both README files. `package.json` must keep `./client` pointed at `./lib/client.js` and must not contain a `workspace:` dependency.
 
 ## Profile installation
@@ -26,18 +28,11 @@ Install the published package in the profile project and insert this row after `
       name: '@deepseek-ai/dsh-developer-workbench'
 ```
 
-Verify the host assembly with `node examples/profile-on/verify-host-cli.mjs on`. To uninstall, run `dsh plugin --profile <name> remove @deepseek-ai/dsh-developer-workbench`, remove the overlay row, reload the profile, and run the verifier with `off`. The host frame and child presentation fallbacks must return without changing session data, workspace selection, drafts, or tool history.
+The profile patch must be inserted after `dsh-web-app`; installing the package alone does not enable the browser contribution. On an enabled reload the task launcher (blank, idle session) and the active-task indicator appear inside the host input zone; after removing both the dependency and patch row they disappear while the host frame keeps its own markup. The plugin never writes session data, workspace selection, drafts, or tool history.
 
 ## Recorded verification
 
-On 2026-08-24, an isolated temporary `DSH_HOME` was installed through the source host CLI, loaded with the overlay, then uninstalled by removing the dependency and overlay row. The host CLI reported the plugin row while enabled and no row after removal. Browser reloads returned:
-
-```text
-enabled:  status=200 workbench=1 default=0 errors=0
-disabled: status=200 workbench=0 default=1 errors=0
-```
-
-The lifecycle used no model request and did not write session, workspace, draft, or tool-history state; the host-owned fallback remained responsible for those surfaces.
+The additive design is covered by the automated suite above (registration, disposal, render, and starter interaction); it involves no model request and writes no host state. A manual profile reload after enable/remove confirms the two dock markers appear and disappear while the host frame is unchanged.
 
 ## Publication boundary
 
