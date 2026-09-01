@@ -1,4 +1,8 @@
-# Developer Workbench Presentation Implementation Plan
+# Developer Workbench Presentation Implementation Plan (Superseded)
+
+> This historical plan described a host-owned frame shell. It is retained for
+> context only; the community-safe implementation follows
+> `2026-09-01-focused-flow-additive.md` and never modifies the host frame.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 

@@ -11,22 +11,25 @@
 
 插件不替换宿主 frame，只在宿主输入区域内注册两个 list slot 贡献（与 todo / queue 等宿主条目共存）：
 
-### 1. TaskLauncherDock（任务启动器）
+### 1. TaskLauncherDock（任务控制台）
 ```tsx
-// 在空白且空闲的会话中显示于输入区上方
+// 随会话显示于输入区上方
 <section data-dsh-workbench-task-launcher="true">
-  <span data-dsh-workbench-eyebrow="true">从明确的任务开始</span>
-  <h2>现在要处理什么？</h2>
-  <p>选择一个起始任务开始。</p>
-  <button data-dsh-workbench-starter="true">修复失败测试</button>
-  <button data-dsh-workbench-starter="true">重构模块</button>
-  <button data-dsh-workbench-starter="true">解释代码库</button>
+  <span data-dsh-workbench-eyebrow="true">开发者任务流</span>
+  <h2>准备开始任务</h2>
+  <p>描述目标，并使用 @ 添加代码上下文。</p>
+  <div data-dsh-workbench-task-summary="true">
+    <strong>等待任务</strong>
+    <span>上下文 0</span>
+  </div>
+  <button data-dsh-workbench-action="scaffold">插入任务骨架</button>
 </section>
 ```
 
 **行为**:
-- 仅在空白会话显示（`useSession(s => s.blank)` 且未运行）
-- 点击按钮通过 `inputActions.setDraft()` 填充输入框
+- 随会话显示任务阶段、草稿摘要、上下文数量和排队数量
+- 空白会话提供一个“插入任务骨架”操作
+- 操作通过 `inputActions.setDraft()` 填充任务草稿，发送仍由宿主 composer 负责
 
 ### 2. ActiveTaskIndicator（活跃任务指示器）
 ```tsx
@@ -35,16 +38,15 @@
   <span data-dsh-workbench-task-indicator="true" /> {/* 状态圆点 */}
   <strong>正在执行</strong>
   <span>待处理 2 条</span>
-  <span data-workbench-plan="true">
-    <span data-workbench-plan-progress="true" style={{ width: "70%" }} /> {/* 进度条 */}
-  </span>
+  <span data-dsh-workbench-status-track="true" />
 </aside>
 ```
 
 **状态**:
-- 🟢 运行中：绿色圆点 + 70% 进度
-- 🟡 队列中：黄色圆点 + 28% 进度
-- ⚪ 空闲：灰色圆点 + 0% 进度
+- 🔵 运行中：蓝色状态点
+- 🟡 队列中：琥珀色状态点 + 排队数量
+- ⚪ 空闲：中性状态点
+- 不展示宿主未提供的虚假完成百分比
 
 ## 🎨 CSS 设计系统
 
@@ -59,7 +61,7 @@
   --dsw-alias-workbench-border: #2b3241;       /* 边框 */
   --dsw-alias-workbench-accent: #79a8ff;       /* 强调色（蓝色）*/
   --dsw-alias-workbench-success: #7ec8a4;      /* 成功色（绿色）*/
-  --dsw-alias-workbench-plan-progress: #7ec8a4;/* 进度条颜色 */
+  --dsw-alias-workbench-status-running: #79a8ff; /* 运行状态 */
 }
 ```
 
@@ -67,8 +69,8 @@
 ```css
 /* 移动端 (≤560px) */
 @media (max-width: 560px) {
-  [data-dsh-workbench-task-launcher] > div[role="list"] {
-    grid-template-columns: 1fr; /* 单列布局 */
+  [data-dsh-workbench-task-summary] {
+    flex-direction: column; /* 窄屏堆叠 */
   }
 }
 ```
@@ -135,12 +137,12 @@ console.log('Active task:', document.querySelector('[data-dsh-workbench-active-t
 
 ## 🎯 关键交互
 
-1. **任务启动器按钮**
-   - 点击 → 通过 `inputActions.setDraft()` 填充输入框草稿
-   - 会话开始后（非空白或运行中）自动隐藏
+1. **任务控制台**
+   - “插入任务骨架” → 通过 `inputActions.setDraft()` 填充目标、上下文和验收标准
+   - 草稿存在时可清空，实际发送仍由宿主 composer 处理
 
 2. **活跃任务指示器**
-   - 随会话 `running` / `queue.length` 状态实时切换文案与进度
+   - 随会话 `running` / `queue.length` 状态实时切换文案与状态轨道
 
 ## 🚀 下一步
 

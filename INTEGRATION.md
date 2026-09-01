@@ -22,15 +22,17 @@ The original plugin tried to replace the host `root` frame and registered into s
 ### Updated Design (Purely Additive)
 The plugin now registers into two **list slots** whose occupants coexist by `id`/`order`:
 
-1. **Task Launcher**
+1. **Task Focus Console**
    - Slot: `conversation.input.dock` (`id: 'workbench', order: 10`)
    - Component: `TaskLauncherDock`
-   - Shows starter prompts in blank, idle sessions above the composer; fills the draft via `inputActions.setDraft`
+   - Shows task phase, draft summary, context count, and queue count above the composer
+   - Blank sessions can insert one goal/context/acceptance-criteria scaffold via `inputActions.setDraft`
 
 2. **Active Task Indicator**
    - Slot: `conversation.input.right` (`id: 'workbench', order: 0`)
    - Component: `ActiveTaskIndicator`
-   - Displays running/queued status and a progress track from the injected `useSession` hook
+   - Displays running/queued/idle status from the injected `useSession` and `useInput` hooks
+   - Uses a status track only; it does not claim an unavailable completion percentage
 
 The plugin never declares host-owned seats (`root`, `details`, `tool.call.toolview`), so it loads without error and never replaces a shipped occupant.
 
@@ -66,20 +68,18 @@ The plugin never declares host-owned seats (`root`, `details`, `tool.call.toolvi
 
 ## 🎨 UI Features
 
-### Task Launcher Dock
-- Shows only on blank, idle sessions (no durable turn yet, not running)
-- Three starter buttons with Chinese prompts:
-  - 修复失败测试 (Fix failing tests)
-  - 重构模块 (Refactor a module)
-  - 解释代码库 (Explain the codebase)
-- Clicking calls the host's `inputActions.setDraft` to fill the composer draft
+### Task Focus Console
+- Follows the current session and remains visible while the task is active
+- Displays the current phase, draft preview, number of `@` context references, and queued messages
+- Blank sessions expose one `Insert task scaffold` action; no fixed starter catalog is rendered
+- The action calls the host's `inputActions.setDraft` and leaves submission to the resident composer
 
 ### Active Task Indicator
-- Shows session status in the input right area from `useSession` selectors
+- Shows session status in the input right area from `useSession` / `useInput` selectors
 - Visual indicators:
-  - Green dot + "Running" when the session is active
-  - Yellow dot + queue count when tasks are pending
-  - Progress bar showing a completion proportion
+  - Blue dot + "Running" when the session is active
+  - Amber dot + queue count when messages are pending
+  - Neutral status track when idle; no fabricated progress value
 
 ## 🔍 Verification
 
@@ -125,7 +125,7 @@ After installation, verify the plugin is working:
 ### Why These Slots?
 The plugin is additive by construction:
 - `conversation.input.dock` / `conversation.input.right` are **list slots** — occupants coexist by `id`/`order` beside the shipped entries (todo, queue, …)
-- The host injects session-standard hooks (`useSession`, `inputActions`, `t`); the components never receive a `session` object
+- The host injects session-standard hooks (`useSession`, `useInput`, `inputActions`, `t`); the components never own a session store
 - Tokens and styles are scoped under the `data-dsh-developer-workbench="true"` marker on each component root
 
 ### Compatibility
@@ -133,9 +133,9 @@ This plugin works with DSH client packages at version `^0.1.1-rc.2` or later, as
 
 ### Future Enhancements
 Potential additions that stay within the additive contract:
-- More starter tasks in the launcher
+- Context-aware composer accessories as new public list slots become available
 - Additional list-slot occupants in the input zone
-- Plan-visualization contributions through list slots that expose them
+- Plan-visualization contributions through slots that expose real plan projections
 
 ## 📄 License
 

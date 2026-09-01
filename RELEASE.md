@@ -14,7 +14,7 @@ pnpm run build
 pnpm pack --dry-run
 ```
 
-`pnpm run test` covers the additive contract. `tests/registration.client.spec.tsx` pins the two dock registrations (names, `id`, `order`, locale) and their disposal, and asserts the plugin never declares host-owned seats (`root`, `details`, `tool.call.toolview`). `tests/presentation.client.spec.tsx` and `tests/browser.workbench.spec.tsx` render the task launcher and active-task indicator through the injected `useSession` hook and drive a starter click into `inputActions.setDraft`.
+`pnpm run test` covers the additive contract. `tests/registration.client.spec.tsx` pins the two dock registrations (names, `id`, `order`, locale) and their disposal, and asserts the plugin never declares host-owned seats (`root`, `details`, `tool.call.toolview`). `tests/presentation.client.spec.tsx` and `tests/browser.workbench.spec.tsx` render the task focus console and active-task indicator through the injected `useSession` / `useInput` hooks and verify the scaffold action writes to `inputActions.setDraft`.
 
 The packed file must contain `lib/client.js`, declarations, scoped CSS, and both README files. `package.json` must keep `./client` pointed at `./lib/client.js` and must not contain a `workspace:` dependency.
 
@@ -28,11 +28,11 @@ Install the published package in the profile project and insert this row after `
       name: '@deepseek-ai/dsh-developer-workbench'
 ```
 
-The profile patch must be inserted after `dsh-web-app`; installing the package alone does not enable the browser contribution. On an enabled reload the task launcher (blank, idle session) and the active-task indicator appear inside the host input zone; after removing both the dependency and patch row they disappear while the host frame keeps its own markup. The plugin never writes session data, workspace selection, drafts, or tool history.
+The profile patch must be inserted after `dsh-web-app`; installing the package alone does not enable the browser contribution. On an enabled reload the task focus console and active-task indicator appear inside the host input zone; after removing both the dependency and patch row they disappear while the host frame keeps its own markup. The plugin never writes session data, workspace selection, or tool history, and only uses the public input action to write task drafts.
 
 ## Recorded verification
 
-The additive design is covered by the automated suite above (registration, disposal, render, and starter interaction); it involves no model request and writes no host state. A manual profile reload after enable/remove confirms the two dock markers appear and disappear while the host frame is unchanged.
+The additive design is covered by the automated suite above (registration, disposal, render, and scaffold interaction); it involves no model request and writes no host state beyond the explicit draft action. A manual profile reload after enable/remove confirms the two dock markers appear and disappear while the host frame is unchanged.
 
 ## Publication boundary
 

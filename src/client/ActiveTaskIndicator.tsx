@@ -1,39 +1,35 @@
 import type { PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import { NS } from './locales.ts'
 
-/**
- * Props of a `conversation.input.right` occupant: session facts arrive
- * through the injected `useSession` selector hook, not an owner object.
- */
+/** Props of a `conversation.input.right` occupant. */
 type ActiveTaskIndicatorProps = PropsRuntime<'conversation.input.right'> & PropsLocale<typeof NS>
 
 /** Compact active-task indicator rendered in the input right area. */
-export function ActiveTaskIndicator({ useSession, t }: ActiveTaskIndicatorProps) {
+export function ActiveTaskIndicator({ useSession, useInput, t }: ActiveTaskIndicatorProps) {
   const running = useSession(s => s.running)
-  const pendingCount = useSession(s => s.queue.length)
+  const pendingCount = useInput(s => s.queue.length)
   const hasPending = pendingCount > 0
-  const progress = running ? 70 : hasPending ? 28 : 0
+  const phase = useInput(s => s.phase)
+  const state = running ? 'running' : hasPending ? 'queued' : 'idle'
+  const label = state === 'running' ? t('active.running') : state === 'queued' ? t('active.queued') : t('active.idle')
 
   return (
     <aside
       data-dsh-developer-workbench="true"
       data-dsh-workbench-active-task="true"
-      data-phase={running ? 'running' : 'idle'}
-      data-plan-state={running ? 'running' : hasPending ? 'queued' : 'idle'}
+      data-phase={state}
+      data-input-phase={phase}
       aria-live="polite"
     >
       <span data-dsh-workbench-task-indicator="true" aria-hidden="true" />
       <div data-dsh-workbench-active-copy="true">
-        <strong>{t(running ? 'active.running' : 'active.idle')}</strong>
+        <strong>{label}</strong>
         {hasPending && <span>{t('active.pending', { count: pendingCount })}</span>}
       </div>
       <span
-        data-workbench-plan="true"
-        data-dsh-workbench-plan-track="true"
+        data-dsh-workbench-status-track="true"
         aria-hidden="true"
-      >
-        <span data-workbench-plan-progress="true" style={{ width: `${progress}%` }} />
-      </span>
+      />
     </aside>
   )
 }

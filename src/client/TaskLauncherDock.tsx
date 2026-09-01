@@ -1,54 +1,75 @@
 import type { PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import { NS } from './locales.ts'
 
-/**
- * Props of a `conversation.input.dock` occupant: the host injects the
- * session-standard hooks and actions (no `session` object — session facts
- * arrive through `useSession` selectors).
- */
+/** Props of a `conversation.input.dock` occupant. */
 type TaskLauncherDockProps = PropsRuntime<'conversation.input.dock'> & PropsLocale<typeof NS>
 
-const STARTERS = [
-  ['task.fixTests', '修复当前工作区中的失败测试，并说明根因。'],
-  ['task.refactorModule', '重构当前工作区中的一个模块，并保持现有行为。'],
-  ['task.explainCodebase', '解释当前工作区的主要模块、入口和依赖关系。'],
-] as const
+const TASK_SCAFFOLD = '目标：\n\n上下文：\n\n验收标准：'
 
-/** Workbench task starter strip rendered in the input dock area. */
-export function TaskLauncherDock({ useSession, inputActions, t }: TaskLauncherDockProps) {
-  // Only show on blank sessions (no durable turn yet) and not running.
+/** Focused task console rendered above the host-owned composer. */
+export function TaskLauncherDock({ useSession, useInput, inputActions, t }: TaskLauncherDockProps) {
   const blank = useSession(s => s.blank)
   const running = useSession(s => s.running)
-  if (!blank || running) {
-    return null
-  }
+  const draft = useInput(s => s.draft)
+  const phase = useInput(s => s.phase)
+  const contextCount = useInput(s => s.occurrences.length)
+  const queueCount = useInput(s => s.queue.length)
+  const title = running ? t('task.runningTitle') : blank ? t('task.blankTitle') : t('task.activeTitle')
+  const description = draft.trim() === '' ? t('task.blankDescription') : t('task.draftDescription')
+  const phaseLabel = running ? t('active.running') : t(
+    phase === 'submitting'
+      ? 'task.phase.submitting'
+      : phase === 'adjudicating'
+        ? 'task.phase.adjudicating'
+        : phase === 'claimed'
+          ? 'task.phase.claimed'
+          : 'task.phase.plain',
+  )
 
   return (
     <section
       data-dsh-developer-workbench="true"
       data-dsh-workbench-task-launcher="true"
+      data-phase={running ? 'running' : blank ? 'blank' : 'active'}
       aria-labelledby="dsh-workbench-task-launcher-title"
     >
       <div data-dsh-workbench-task-launcher-copy="true">
-        <span data-dsh-workbench-eyebrow="true">{t('task.launcherEyebrow')}</span>
-        <h2 id="dsh-workbench-task-launcher-title">{t('task.launcherTitle')}</h2>
-        <p>{t('task.launcherDescription')}</p>
+        <span data-dsh-workbench-eyebrow="true">{t('task.flowEyebrow')}</span>
+        <h2 id="dsh-workbench-task-launcher-title">{title}</h2>
+        <p>{description}</p>
       </div>
-      <div role="list" aria-label={t('task.launcherTitle')}>
-        {STARTERS.map(([label, prompt]) => (
+      <div data-dsh-workbench-task-summary="true">
+        <div data-dsh-workbench-task-status="true" data-status={running ? 'running' : phase}>
+          <span data-dsh-workbench-status-dot="true" aria-hidden="true" />
+          <strong>{phaseLabel}</strong>
+          {draft.trim() !== '' && <code data-dsh-workbench-draft="true">{draft}</code>}
+        </div>
+        <div data-dsh-workbench-task-metrics="true" aria-label={t('task.flowEyebrow')}>
+          <span>{t('task.contextCount', { count: contextCount })}</span>
+          {queueCount > 0 && <span>{t('task.queueCount', { count: queueCount })}</span>}
+        </div>
+      </div>
+      <div data-dsh-workbench-task-actions="true">
+        {blank && !running && draft.trim() === '' && (
           <button
-            key={label}
             type="button"
             data-interactive="true"
-            data-dsh-workbench-starter="true"
-            onClick={() => {
-              // Insert the prompt into the draft using the input actions
-              inputActions.setDraft(prompt)
-            }}
+            data-dsh-workbench-action="scaffold"
+            onClick={() => { inputActions.setDraft(TASK_SCAFFOLD) }}
           >
-            {t(label as Parameters<typeof t>[0])}
+            {t('task.insertScaffold')}
           </button>
-        ))}
+        )}
+        {!running && draft.trim() !== '' && (
+          <button
+            type="button"
+            data-interactive="true"
+            data-dsh-workbench-action="clear"
+            onClick={() => { inputActions.setDraft('') }}
+          >
+            {t('task.clearDraft')}
+          </button>
+        )}
       </div>
     </section>
   )

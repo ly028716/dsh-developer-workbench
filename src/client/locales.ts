@@ -3,36 +3,63 @@ import type { LocaleDictOf } from '@deepseek-ai/dsh-client-ui-slots'
 export const NS = 'developer-workbench' as const
 
 export type DeveloperWorkbenchKey =
-  | 'task.fixTests'
-  | 'task.refactorModule'
-  | 'task.explainCodebase'
-  | 'task.launcherEyebrow'
-  | 'task.launcherTitle'
-  | 'task.launcherDescription'
+  | 'task.flowEyebrow'
+  | 'task.blankTitle'
+  | 'task.activeTitle'
+  | 'task.runningTitle'
+  | 'task.blankDescription'
+  | 'task.draftDescription'
+  | 'task.insertScaffold'
+  | 'task.clearDraft'
+  | 'task.phase.plain'
+  | 'task.phase.adjudicating'
+  | 'task.phase.claimed'
+  | 'task.phase.submitting'
+  | 'task.contextCount'
+  | 'task.queueCount'
   | 'active.running'
+  | 'active.queued'
   | 'active.idle'
   | 'active.pending'
 
 export const en: LocaleDictOf<typeof NS> = {
-  'task.fixTests': 'Fix failing tests',
-  'task.refactorModule': 'Refactor a module',
-  'task.explainCodebase': 'Explain the codebase',
-  'task.launcherEyebrow': 'Start from a focused prompt',
-  'task.launcherTitle': 'What should we work on?',
-  'task.launcherDescription': 'Choose a starter to begin.',
+  'task.flowEyebrow': 'Developer task flow',
+  'task.blankTitle': 'Ready for a task',
+  'task.activeTitle': 'Continue the current task',
+  'task.runningTitle': 'Task is running',
+  'task.blankDescription': 'Describe the goal, then use @ to add code context.',
+  'task.draftDescription': 'Current draft',
+  'task.insertScaffold': 'Insert task scaffold',
+  'task.clearDraft': 'Clear draft',
+  'task.phase.plain': 'Waiting for task',
+  'task.phase.adjudicating': 'Preparing',
+  'task.phase.claimed': 'Ready to submit',
+  'task.phase.submitting': 'Submitting',
+  'task.contextCount': '{count} context',
+  'task.queueCount': '{count} queued',
   'active.running': 'Running',
+  'active.queued': 'Queued',
   'active.idle': 'Idle',
   'active.pending': '{count} pending',
 }
 
 export const zh: LocaleDictOf<typeof NS> = {
-  'task.fixTests': '修复失败测试',
-  'task.refactorModule': '重构模块',
-  'task.explainCodebase': '解释代码库',
-  'task.launcherEyebrow': '从明确的任务开始',
-  'task.launcherTitle': '现在要处理什么？',
-  'task.launcherDescription': '选择一个起始任务开始。',
-  'active.running': '正在执行',
+  'task.flowEyebrow': '开发者任务流',
+  'task.blankTitle': '准备开始任务',
+  'task.activeTitle': '继续当前任务',
+  'task.runningTitle': '任务正在执行',
+  'task.blankDescription': '描述目标，并使用 @ 添加代码上下文。',
+  'task.draftDescription': '当前草稿',
+  'task.insertScaffold': '插入任务骨架',
+  'task.clearDraft': '清空草稿',
+  'task.phase.plain': '等待任务',
+  'task.phase.adjudicating': '准备中',
+  'task.phase.claimed': '待提交',
+  'task.phase.submitting': '提交中',
+  'task.contextCount': '上下文 {count}',
+  'task.queueCount': '排队 {count}',
+  'active.running': '执行中',
+  'active.queued': '排队中',
   'active.idle': '空闲',
   'active.pending': '待处理 {count} 条',
 }
