@@ -19,6 +19,10 @@ const translate = (key: string, params?: Record<string, unknown>): string => {
     'task.draftDescription': 'Current draft',
     'task.insertScaffold': 'Insert task scaffold',
     'task.clearDraft': 'Clear draft',
+    'task.confirmClear': 'Clear permanently',
+    'task.cancelClear': 'Keep draft',
+    'task.expandDraft': 'Show full draft',
+    'task.collapseDraft': 'Collapse draft',
     'task.scaffold': 'Goal:\n\nContext:\n\nAcceptance criteria:',
     'task.phase.plain': 'Waiting for task',
     'task.phase.submitting': 'Submitting',
@@ -140,6 +144,83 @@ describe('Workbench dock contributions in a real DOM', () => {
     act(() => { (container.querySelector('[data-dsh-workbench-action="scaffold"]') as HTMLButtonElement).click() })
 
     expect(setDraft).toHaveBeenCalledWith('Goal:\n\nContext:\n\nAcceptance criteria:')
+    act(() => { root.unmount() })
+  })
+
+  it('requires a second explicit action before clearing a draft', () => {
+    const setDraft = vi.fn()
+    const container = document.createElement('div')
+    document.body.append(container)
+    const root = mount(
+      <TaskLauncherDock
+        useSession={useSessionFrom({ running: false, blank: false, queue: [] })}
+        useInput={useInputFrom({ draft: 'Keep this implementation plan', phase: 'plain', occurrences: [], queue: [] })}
+        inputActions={{ setDraft }}
+        t={translate}
+      />,
+      container,
+    )
+
+    act(() => { (container.querySelector('[data-dsh-workbench-action="clear"]') as HTMLButtonElement).click() })
+    expect(setDraft).not.toHaveBeenCalled()
+    expect(container.querySelector('[data-dsh-workbench-action="confirm-clear"]')).not.toBeNull()
+
+    act(() => { (container.querySelector('[data-dsh-workbench-action="confirm-clear"]') as HTMLButtonElement).click() })
+    expect(setDraft).toHaveBeenCalledWith('')
+    act(() => { root.unmount() })
+  })
+
+  it('keeps a long draft compact until the user explicitly expands it', () => {
+    const draft = `${'Implementation context '.repeat(24)}sensitive-end`
+    const container = document.createElement('div')
+    document.body.append(container)
+    const root = mount(
+      <TaskLauncherDock
+        useSession={useSessionFrom({ running: false, blank: false, queue: [] })}
+        useInput={useInputFrom({ draft, phase: 'plain', occurrences: [], queue: [] })}
+        inputActions={{ setDraft: () => {} }}
+        t={translate}
+      />,
+      container,
+    )
+
+    expect(container.textContent).not.toContain('sensitive-end')
+    expect(container.querySelector('[data-dsh-workbench-action="expand-draft"]')).not.toBeNull()
+
+    act(() => { (container.querySelector('[data-dsh-workbench-action="expand-draft"]') as HTMLButtonElement).click() })
+    expect(container.textContent).toContain('sensitive-end')
+    expect(container.querySelector('[data-dsh-workbench-draft="true"]')?.getAttribute('data-expanded')).toBe('true')
+    act(() => { root.unmount() })
+  })
+
+  it('exposes stateful draft disclosure and task status to assistive technology', () => {
+    const container = document.createElement('div')
+    document.body.append(container)
+    const root = mount(
+      <>
+        <TaskLauncherDock
+          useSession={useSessionFrom({ running: false, blank: false, queue: [] })}
+          useInput={useInputFrom({ draft: 'x'.repeat(300), phase: 'plain', occurrences: [], queue: [] })}
+          inputActions={{ setDraft: () => {} }}
+          t={translate}
+        />
+        <ActiveTaskIndicator
+          useSession={useSessionFrom({ running: true, blank: false, queue: [] })}
+          useInput={useInputFrom({ draft: '', phase: 'submitting', occurrences: [], queue: [] })}
+          t={translate}
+        />
+      </>,
+      container,
+    )
+
+    const toggle = container.querySelector<HTMLButtonElement>('[data-dsh-workbench-action="expand-draft"]')!
+    expect(toggle.getAttribute('aria-expanded')).toBe('false')
+    expect(toggle.getAttribute('aria-controls')).toBe('dsh-workbench-draft-preview')
+    expect(container.querySelector('[data-dsh-workbench-active-task]')?.getAttribute('role')).toBe('status')
+    expect(container.querySelector('[data-dsh-workbench-active-task]')?.getAttribute('aria-live')).toBe('polite')
+
+    act(() => { toggle.click() })
+    expect(toggle.getAttribute('aria-expanded')).toBe('true')
     act(() => { root.unmount() })
   })
 

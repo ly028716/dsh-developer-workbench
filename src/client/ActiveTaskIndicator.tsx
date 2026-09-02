@@ -19,6 +19,7 @@ export function ActiveTaskIndicator({ useSession, useInput, t }: ActiveTaskIndic
       data-dsh-workbench-active-task="true"
       data-phase={state}
       data-input-phase={phase}
+      role="status"
       aria-live="polite"
     >
       <span data-dsh-workbench-task-indicator="true" aria-hidden="true" />

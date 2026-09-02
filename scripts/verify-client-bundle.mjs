@@ -22,6 +22,7 @@ if (registration?.id !== packageName || typeof registration?.factory !== 'functi
 }
 
 const runtime = registration.factory((id) => {
+  if (id === 'react') return { useState: value => [value, () => {}] }
   if (id === 'react/jsx-runtime') {
     return { Fragment: Symbol.for('react.fragment'), jsx: () => null, jsxs: () => null }
   }

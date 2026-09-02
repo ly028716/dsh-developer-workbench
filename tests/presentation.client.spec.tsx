@@ -14,6 +14,10 @@ function translate(key: string, params?: Record<string, unknown>): string {
   if (key === 'task.draftDescription') return '当前草稿'
   if (key === 'task.insertScaffold') return '插入任务骨架'
   if (key === 'task.clearDraft') return '清空草稿'
+  if (key === 'task.confirmClear') return '确认清空'
+  if (key === 'task.cancelClear') return '保留草稿'
+  if (key === 'task.expandDraft') return '展开草稿'
+  if (key === 'task.collapseDraft') return '收起草稿'
   if (key === 'task.phase.plain') return '等待任务'
   if (key === 'task.phase.submitting') return '提交中'
   if (key === 'task.contextCount') return `上下文 ${String(params?.count ?? '')}`

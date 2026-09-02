@@ -122,8 +122,14 @@
   min-width: 0;
   overflow: hidden;
   color: var(--dsw-alias-workbench-muted);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+[data-dsh-developer-workbench="true"] [data-dsh-workbench-draft="true"][data-expanded="false"] {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 [data-dsh-developer-workbench="true"] [data-dsh-workbench-task-metrics="true"] {

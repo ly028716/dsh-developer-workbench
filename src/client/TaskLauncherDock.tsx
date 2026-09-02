@@ -1,4 +1,5 @@
 import type { PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
+import { useState } from 'react'
 import { NS } from './locales.ts'
 
 /** Props of a `conversation.input.dock` occupant. */
@@ -6,12 +7,16 @@ type TaskLauncherDockProps = PropsRuntime<'conversation.input.dock'> & PropsLoca
 
 /** Focused task console rendered above the host-owned composer. */
 export function TaskLauncherDock({ useSession, useInput, inputActions, t }: TaskLauncherDockProps) {
+  const [clearConfirmation, setClearConfirmation] = useState(false)
+  const [draftExpanded, setDraftExpanded] = useState(false)
   const blank = useSession(s => s.blank)
   const running = useSession(s => s.running)
   const draft = useInput(s => s.draft)
   const phase = useInput(s => s.phase)
   const contextCount = useInput(s => s.occurrences.length)
   const queueCount = useInput(s => s.queue.length)
+  const hasLongDraft = draft.length > 280
+  const draftPreview = hasLongDraft && !draftExpanded ? `${draft.slice(0, 280).trimEnd()}…` : draft
   const title = running ? t('task.runningTitle') : blank ? t('task.blankTitle') : t('task.activeTitle')
   const description = draft.trim() === '' ? t('task.blankDescription') : t('task.draftDescription')
   const phaseLabel = running ? t('active.running') : t(
@@ -40,7 +45,7 @@ export function TaskLauncherDock({ useSession, useInput, inputActions, t }: Task
         <div data-dsh-workbench-task-status="true" data-status={running ? 'running' : phase}>
           <span data-dsh-workbench-status-dot="true" aria-hidden="true" />
           <strong>{phaseLabel}</strong>
-          {draft.trim() !== '' && <code data-dsh-workbench-draft="true">{draft}</code>}
+          {draft.trim() !== '' && <code id="dsh-workbench-draft-preview" data-dsh-workbench-draft="true" data-expanded={draftExpanded ? 'true' : 'false'}>{draftPreview}</code>}
         </div>
         <div data-dsh-workbench-task-metrics="true" aria-label={t('task.flowEyebrow')}>
           <span>{t('task.contextCount', { count: contextCount })}</span>
@@ -48,6 +53,18 @@ export function TaskLauncherDock({ useSession, useInput, inputActions, t }: Task
         </div>
       </div>
       <div data-dsh-workbench-task-actions="true">
+        {hasLongDraft && (
+          <button
+            type="button"
+            data-interactive="true"
+            data-dsh-workbench-action="expand-draft"
+            aria-controls="dsh-workbench-draft-preview"
+            aria-expanded={draftExpanded}
+            onClick={() => { setDraftExpanded(value => !value) }}
+          >
+            {draftExpanded ? t('task.collapseDraft') : t('task.expandDraft')}
+          </button>
+        )}
         {blank && !running && draft.trim() === '' && (
           <button
             type="button"
@@ -58,16 +75,31 @@ export function TaskLauncherDock({ useSession, useInput, inputActions, t }: Task
             {t('task.insertScaffold')}
           </button>
         )}
-        {!running && draft.trim() !== '' && (
+        {!running && draft.trim() !== '' && (clearConfirmation ? <>
           <button
             type="button"
             data-interactive="true"
-            data-dsh-workbench-action="clear"
-            onClick={() => { inputActions.setDraft('') }}
+            data-dsh-workbench-action="confirm-clear"
+            onClick={() => { inputActions.setDraft(''); setClearConfirmation(false) }}
           >
-            {t('task.clearDraft')}
+            {t('task.confirmClear')}
           </button>
-        )}
+          <button
+            type="button"
+            data-interactive="true"
+            data-dsh-workbench-action="cancel-clear"
+            onClick={() => { setClearConfirmation(false) }}
+          >
+            {t('task.cancelClear')}
+          </button>
+        </> : <button
+          type="button"
+          data-interactive="true"
+          data-dsh-workbench-action="clear"
+          onClick={() => { setClearConfirmation(true) }}
+        >
+          {t('task.clearDraft')}
+        </button>)}
       </div>
     </section>
   )
